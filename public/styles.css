@@ -1,0 +1,366 @@
+/* Couleurs et typographie inspirées d’un univers doux et féminin */
+body {
+  margin: 0;
+  font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background: #f9f5f2;
+  color: #333;
+  line-height: 1.6;
+}
+
+header {
+  text-align: center;
+  padding: 3rem 1rem;
+  background: #f1edea;
+}
+
+/* Ajustement des titres principaux pour qu’ils se détachent davantage */
+header h1 {
+  font-size: 2.8rem;
+  margin-bottom: 0.5rem;
+  color: #5a3e36;
+}
+
+header h2 {
+  font-size: 1.6rem;
+  color: #a37c6c;
+}
+
+main {
+  max-width: 700px;
+  margin: 2rem auto;
+  padding: 1.5rem;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.intro {
+  margin-bottom: 1.5rem;
+}
+
+/* Style pour les titres de sections de la page d’inscription */
+.section-title {
+  font-size: 1.6rem;
+  font-weight: bold;
+  margin-top: 1.2rem;
+  margin-bottom: 0.5rem;
+  color: #5a3e36;
+}
+
+/* Conteneur du logo centré en bas du formulaire */
+.logo-container {
+  margin-top: 2rem;
+  text-align: center;
+}
+
+.logo-container img {
+  max-width: 150px;
+  height: auto;
+  border-radius: 50%;
+}
+
+/* Logo placé sous le titre principal dans le header */
+.header-logo {
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.header-logo img {
+  max-width: 120px;
+  height: auto;
+  border-radius: 50%;
+}
+
+/* Calendrier et sélection horaire inspirés des pages professionnelles type Calendly */
+/* Calendrier et sélection horaire inspirés des interfaces de réservation professionnelles */
+.calendar-scheduler {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin-top: 0.5rem;
+}
+
+/* Grille des dates : 7 colonnes pour représenter les jours de la semaine. Chaque case
+   est suffisamment grande pour une interaction confortable. */
+.date-picker {
+  flex: 1 1 45%;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.5rem;
+}
+
+.date-picker .day {
+  /* Affichage en colonne pour inclure numéro, jour et mois. Nous utilisons
+     un flex‑box vertical pour aligner le texte. */
+  padding: 0.6rem 0.4rem;
+  font-size: 0.9rem;
+  text-align: center;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  cursor: pointer;
+  background: #ffffff;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 60px;
+}
+
+/* Styles pour le numéro du jour et l’étiquette du jour/mois */
+.date-picker .day-number {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #5a3e36;
+}
+
+.date-picker .day-label {
+  font-size: 0.7rem;
+  color: #7c5448;
+  text-transform: lowercase;
+}
+
+.date-picker .day:hover {
+  /* Couleur plus visible au survol pour mettre en valeur la date sous le curseur */
+  background: #f5e6de;
+  color: #5a3e36;
+  border-color: #e2cfc4;
+}
+
+.date-picker .day.selected {
+  /* Mettre en surbrillance la date sélectionnée avec une couleur bleue claire */
+  background: #dde9f7;
+  color: #0d3b66;
+  border-color: #aacdec;
+}
+
+/* Panneau des horaires : placé à droite et affichant des boutons occupant toute la
+   largeur, à la manière de Calendly. */
+.time-picker {
+  flex: 1 1 45%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: stretch;
+}
+
+.time-picker button {
+  width: 100%;
+  padding: 0.6rem 1rem;
+  font-size: 1.1rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background: #ffffff;
+  cursor: pointer;
+  text-align: center;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+  /* Couleur plus foncée pour rendre les heures davantage visibles */
+  color: #5a3e36;
+  font-weight: 600;
+}
+
+.time-picker button:hover {
+  background: #f1edea;
+}
+
+.time-picker button.selected {
+  background: #5a3e36;
+  color: #ffffff;
+  border-color: #5a3e36;
+}
+
+/* Liste des bénéfices dans la page d’inscription */
+.benefits {
+  list-style-type: disc;
+  padding-left: 1.4rem;
+  margin-bottom: 1rem;
+}
+
+.benefits li {
+  margin-bottom: 0.4rem;
+  position: relative;
+  padding-left: 0;
+}
+
+.benefits li::before {
+  content: '';
+}
+
+.field {
+  margin-bottom: 1rem;
+}
+
+label {
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+input,
+select {
+  width: 100%;
+  padding: 0.6rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+  background: #fff;
+}
+
+.checkbox label {
+  display: flex;
+  align-items: center;
+}
+
+.checkbox input {
+  margin-right: 0.5rem;
+}
+
+button,
+.button {
+  display: block;
+  width: 100%;
+  padding: 0.8rem;
+  background: #5a3e36;
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+}
+
+button:hover,
+.button:hover {
+  background: #7c5448;
+}
+
+.reassurance {
+  text-align: center;
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+/* Galerie d'images sur la page d'inscription */
+.image-gallery {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.image-gallery img {
+  flex: 1 1 45%;
+  max-width: 100%;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Calendrier de sélection des créneaux */
+.calendar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.calendar-day {
+  flex: 1 1 100%;
+  background: #f9f5f2;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 0.5rem;
+}
+
+/* Style du titre dans les éléments pliables */
+.calendar-day summary {
+  margin: 0;
+  padding: 0.5rem 0;
+  font-size: 1rem;
+  color: #5a3e36;
+  font-weight: bold;
+  cursor: pointer;
+  list-style: none;
+  text-transform: capitalize;
+}
+
+/* Masquer le triangle par défaut sur certains navigateurs */
+.calendar-day summary::-webkit-details-marker {
+  display: none;
+}
+
+/* Conteneur pour les créneaux horaires à l'intérieur d'un jour */
+.calendar-day .time-slots {
+  margin-top: 0.5rem;
+}
+
+.time-slot {
+  display: inline-block;
+  margin: 0.25rem;
+  padding: 0.35rem 0.6rem;
+  border-radius: 4px;
+  background: #eae0da;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.2s, color 0.2s;
+}
+
+.time-slot:hover {
+  background: #d6c5b8;
+}
+
+.time-slot.selected {
+  background: #5a3e36;
+  color: #ffffff;
+}
+
+/* Mise en page de la section d'inscription avec image latérale */
+.content-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  align-items: flex-start;
+}
+
+.text-content {
+  flex: 1 1 55%;
+}
+
+.image-container {
+  flex: 1 1 40%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.image-container img {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  margin-bottom: 1rem;
+}
+
+/* Image positionnée près du bouton d’inscription */
+.bottom-image {
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.bottom-image img {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+h1 {
+  color: #5a3e36;
+  text-align: center;
+}
+
+.confirmation h1 {
+  margin-top: 0;
+}

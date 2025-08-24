@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Masterclass – Accueillir l’Âme de ton enfant</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .video-container {
+      max-width: 800px; margin: 2rem auto; padding: 2rem;
+      background: #fff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,.1);
+      text-align: center;
+    }
+    .video-container h1 { color:#5a3e36; font-size:2.2rem; margin-bottom:1rem; }
+    .video-container p  { color:#7c5448; font-size:1.1rem; margin-bottom:1.5rem; }
+
+    #cta { display:none; margin-top:2rem; }
+    #cta a { display:inline-block; padding:.8rem 1.5rem; background:#5a3e36; color:#fff; border-radius:4px; text-decoration:none; font-size:1rem; }
+    #cta a:hover { background:#7c5448; }
+
+    .video-wrapper { position:relative; width:100%; overflow:hidden; }
+    .video-frame { width:100%; height:450px; border:0; display:block; }
+    .video-overlay { position:absolute; inset:0; background:transparent; pointer-events:auto; }
+    .launch-btn {
+      position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
+      padding:.8rem 1.2rem; border-radius:8px; border:0; font-size:1rem;
+      box-shadow:0 2px 8px rgba(0,0,0,.15); cursor:pointer; display:none;
+    }
+    #soundBtn {
+      position:absolute; left:50%; top:calc(50% + 3.2rem);
+      transform:translate(-50%,-50%); padding:.6rem 1rem;
+      border-radius:8px; border:0; font-size:.95rem;
+      box-shadow:0 2px 8px rgba(0,0,0,.15); cursor:pointer; display:none;
+    }
+  </style>
+</head>
+<body>
+  <main class="video-container">
+    <h1>Accueillir l’Âme de ton enfant ✨</h1>
+    <p>Prends place dans ton cocon et laisse-toi guider dans ce voyage…</p>
+
+    <div id="countdown" style="text-align:center; margin:2rem 0; font-size:1.5rem; color:#5a3e36;"></div>
+
+    <div id="playerContainer" style="display:none;">
+      <div class="video-wrapper" id="ytWrap">
+        <div id="ytPlayer" class="video-frame"></div>
+        <div class="video-overlay" id="overlay"></div>
+        <button class="launch-btn" id="launchBtn">▶ Lancer la masterclass</button>
+        <button id="soundBtn">🔊 Activer le son</button>
+      </div>
+    </div>
+
+    <div id="cta">
+      <p>Cette masterclass t’a inspiré·e&nbsp;? Planifie ton appel découverte de 30&nbsp;minutes&nbsp;:</p>
+      <a href="https://calendly.com/laurmerel/30min" target="_blank" rel="noopener">Réserver mon appel découverte</a>
+    </div>
+  </main>
+
+  <!-- API YouTube Iframe -->
+  <script src="https://www.youtube.com/iframe_api"></script>
+  <script>
+  (function () {
+    const qs          = new URLSearchParams(location.search);
+    const sessionStr  = qs.get('session');
+    const tzParam     = qs.get('tz');
+    const countdownEl = document.getElementById('countdown');
+    const container   = document.getElementById('playerContainer');
+    const overlay     = document.getElementById('overlay');
+    const launchBtn   = document.getElementById('launchBtn');
+    const soundBtn    = document.getElementById('soundBtn');
+    const ctaEl       = document.getElementById('cta');
+
+    const YT_VIDEO_ID = '-DO7yRl7dqw';
+    const LS_KEY      = 'mc_event_start_ms';
+
+    const hasOffsetRe = /([zZ]|[+\-]\d{2}:?\d{2})$/;
+
+    function parseNaiveInZoneToUTCms(naiveISO, timeZone) {
+      const m = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})(?::(\d{2}))?$/.exec(naiveISO);
+      if (!m) return NaN;
+      const [_, Y, Mo, D, h, mi, s] = m;
+      const d = new Date(Date.UTC(+Y, +Mo-1, +D, +h, +mi, s ? +s : 0));
+      const fmt = new Intl.DateTimeFormat('en-CA', {
+        timeZone, year:'numeric', month:'2-digit', day:'2-digit',
+        hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:false
+      });
+      const shown = fmt.formatToParts(d).reduce((a,p)=>{a[p.type]=p.value;return a;}, {});
+      const shownAsUTCms = Date.UTC(+shown.year, +shown.month-1, +shown.day, +shown.hour, +shown.minute, +shown.second);
+      const diff = shownAsUTCms - d.getTime();
+      return d.getTime() - diff;
+    }
+
+    function parseSessionToUTCms(sessionStr, tzParam) {
+      if (!sessionStr) return NaN;
+      if (hasOffsetRe.test(sessionStr)) return Date.parse(sessionStr);
+      if (tzParam) return parseNaiveInZoneToUTCms(sessionStr, tzParam);
+      const viewerTZ = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
+      return parseNaiveInZoneToUTCms(sessionStr, viewerTZ);
+    }
+
+    let EVENT_START_MS = NaN;
+    if (sessionStr) {
+      EVENT_START_MS = parseSessionToUTCms(sessionStr, tzParam);
+      if (!isNaN(EVENT_START_MS)) localStorage.setItem(LS_KEY, String(EVENT_START_MS));
+    }
+    if (isNaN(EVENT_START_MS)) {
+      const saved = Number(localStorage.getItem(LS_KEY));
+      if (!Number.isNaN(saved) && saved > 0) EVENT_START_MS = saved;
+    }
+    if (isNaN(EVENT_START_MS)) {
+      EVENT_START_MS = Date.now();
+      localStorage.setItem(LS_KEY, String(EVENT_START_MS));
+    }
+
+    let player = null, ctaTimer = null;
+    window.player = null; // expose pour le tracking
+
+    function liveOffsetSecs() {
+      return Math.max(0, Math.floor((Date.now() - EVENT_START_MS)/1000));
+    }
+
+    function scheduleCTA() {
+      try {
+        const dur = player.getDuration?.();
+        const cur = player.getCurrentTime?.() || 0;
+        if (!dur || isNaN(dur)) {
+          clearTimeout(ctaTimer);
+          ctaTimer = setTimeout(scheduleCTA, 1000);
+          return;
+        }
+        const remaining = dur - cur;
+        if (remaining <= 300) {
+          ctaEl.style.display = 'block';
+          return;
+        }
+        clearTimeout(ctaTimer);
+        ctaTimer = setTimeout(() => { ctaEl.style.display = 'block'; }, (remaining-300)*1000);
+      } catch {
+        clearTimeout(ctaTimer);
+        ctaTimer = setTimeout(scheduleCTA, 1000);
+      }
+    }
+
+    // ======== TRACKING SIMPLE (pings + seuil 60%) ========
+    (function setupTracking(){
+      const qs = new URLSearchParams(location.search);
+      const urlToken = qs.get('token') || '';
+      function genToken() {
+        try { return crypto.randomUUID(); } catch { return 't_' + Math.random().toString(36).slice(2); }
+      }
+      const localToken = localStorage.getItem('mc_token') || (localStorage.setItem('mc_token', genToken()), localStorage.getItem('mc_token'));
+      const token = urlToken || localToken;
+
+      let watchedSeconds = 0;
+      let lastTick = null;
+      const PING_EVERY = 15;
+      const COMPLETION_RATIO = 0.60;
+
+      function startWatchLoop() {
+        setInterval(() => {
+          if (!window.player || !player.getPlayerState) return;
+          const playing = player.getPlayerState() === YT.PlayerState.PLAYING;
+          if (document.visibilityState !== 'visible' || !playing) { lastTick = null; return; }
+
+          const now = Date.now();
+          if (lastTick) watchedSeconds += Math.min(20, Math.round((now - lastTick)/1000));
+          lastTick = now;
+
+          if (watchedSeconds > 0 && watchedSeconds % PING_EVERY === 0) {
+            fetch('/track', {
+              method: 'POST',
+              headers: {'Content-Type':'application/json'},
+              body: JSON.stringify({ token, watchedSeconds }),
+              keepalive: true
+            }).catch(()=>{});
+          }
+        }, 1000);
+      }
+
+      function startCompletionChecker() {
+        setInterval(() => {
+          try {
+            const dur = player.getDuration?.() || 0;
+            if (dur > 0 && watchedSeconds >= COMPLETION_RATIO * dur) {
+              fetch('/track-complete', {
+                method: 'POST',
+                headers: {'Content-Type':'application/json'},
+                body: JSON.stringify({ token, completed: true }),
+                keepalive: true
+              }).catch(()=>{});
+            }
+          } catch {}
+        }, 15000);
+      }
+
+      window.__startTracking = function () {
+        startWatchLoop();
+        startCompletionChecker();
+      };
+    })();
+    // ======== FIN TRACKING ========
+
+    function buildPlayer(startAt) {
+      container.style.display = 'block';
+      const ensure = () => {
+        if (!player) {
+          player = new YT.Player('ytPlayer', {
+            videoId: YT_VIDEO_ID,
+            width:'100%', height:'450',
+            playerVars:{
+              autoplay:1, mute:1, controls:0, disablekb:1,
+              rel:0, modestbranding:1, playsinline:1, fs:0,
+              iv_load_policy:3, origin:location.origin, start:startAt
+            },
+            events:{
+              onReady:(ev)=>{
+                try { ev.target.setPlaybackRate(1); } catch {}
+                setTimeout(()=>{
+                  if (ev.target.getPlayerState?.() !== YT.PlayerState.PLAYING) {
+                    launchBtn.style.display='inline-block';
+                    soundBtn.style.display='inline-block';
+                  }
+                },1000);
+                scheduleCTA();
+                if (window.__startTracking) window.__startTracking();
+              },
+              onStateChange:(ev)=>{
+                if (ev.data===YT.PlayerState.PLAYING) {
+                  launchBtn.style.display='none';
+                  soundBtn.style.display='inline-block';
+                }
+                if (ev.data===YT.PlayerState.ENDED) {
+                  ctaEl.style.display='block';
+                }
+              }
+            }
+          });
+          window.player = player;
+        } else {
+          try { player.loadVideoById({videoId:YT_VIDEO_ID,startSeconds:startAt}); } catch {}
+        }
+      };
+      const wait = () => (window.YT && YT.Player) ? ensure() : setTimeout(wait,80);
+      wait();
+
+      overlay.onclick = ()=>{ try{player.playVideo();}catch{} };
+      launchBtn.onclick=()=>{ try{player.playVideo();}catch{}; launchBtn.style.display='none'; };
+      soundBtn.onclick =(e)=>{ e.stopPropagation(); try{player.unMute();player.setVolume(100);soundBtn.style.display='none';}catch{} };
+
+      setInterval(()=>{
+        try {
+          const desired=liveOffsetSecs();
+          const cur=player.getCurrentTime?.()||0;
+          if (desired-cur>5) player.seekTo(desired,true);
+        } catch {}
+        scheduleCTA();
+      },15000);
+    }
+
+    document.addEventListener('contextmenu',e=>{
+      if(e.target.closest('#ytWrap')) e.preventDefault();
+    });
+
+    function startFlow() {
+      const diff = EVENT_START_MS - Date.now();
+      if (diff <= 0) {
+        countdownEl.style.display='none';
+        buildPlayer(liveOffsetSecs());
+      } else {
+        function tick() {
+          const d = EVENT_START_MS - Date.now();
+          if (d <= 0) {
+            clearInterval(t);
+            countdownEl.style.display='none';
+            buildPlayer(liveOffsetSecs());
+            return;
+          }
+          const s=Math.floor(d/1000),h=Math.floor(s/3600),m=Math.floor((s%3600)/60),r=s%60;
+          countdownEl.innerHTML=`La masterclass commencera dans <strong>${String(h).padStart(2,'0')}h${String(m).padStart(2,'0')}m${String(r).padStart(2,'0')}s</strong>`;
+        }
+        tick();
+        const t=setInterval(tick,1000);
+      }
+    }
+
+    startFlow();
+  })();
+  </script>
+</body>
+</html>

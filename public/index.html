@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inscription à la Masterclass</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <h1>Accueillir l’Âme de ton enfant</h1>
+    <h2>Masterclass inédite gratuite</h2>
+    <!-- Logo placé en dessous du titre principal pour une présentation harmonieuse -->
+    <div class="header-logo">
+      <img src="logo.png" alt="Logo Laurence Merel" />
+    </div>
+  </header>
+  <main>
+    <!-- Conteneur principal avec texte et image côte à côte -->
+    <div class="content-container">
+      <div class="text-content">
+        <h2 class="section-title">À propos de la Masterclass 🌻</h2>
+        <p>
+          Bien accueillir un enfant n’est pas seulement un acte physique. C’est une véritable rencontre avec son Âme.
+        </p>
+        <p>
+          Que tu sois en projet bébé, enceinte ou déjà parent, cette Masterclass est une invitation à poser les bases d’un lien profond et conscient avec ton enfant.
+        </p>
+        <h2 class="section-title">Ce que tu découvriras ✨</h2>
+        <ul class="benefits">
+          <li>Te préparer à établir un lien d’âme à âme avec ton enfant</li>
+          <li>Libérer tes peurs et nourrir ta confiance</li>
+          <li>Créer un environnement d’amour et de sérénité pour votre famille</li>
+        </ul>
+        <form id="registerForm" method="POST" action="/register">
+          <div class="field">
+            <label for="firstName">Prénom&nbsp;:</label>
+            <input type="text" id="firstName" name="firstName" required>
+          </div>
+          <div class="field">
+            <label for="lastName">Nom&nbsp;:</label>
+            <input type="text" id="lastName" name="lastName">
+          </div>
+          <div class="field">
+            <label for="email">Email&nbsp;:</label>
+            <input type="email" id="email" name="email" required>
+          </div>
+          <div class="field">
+            <label for="session">Choisis ton créneau&nbsp;:</label>
+            <div class="calendar-scheduler">
+              <div id="date-picker" class="date-picker"></div>
+              <div id="time-picker" class="time-picker"></div>
+            </div>
+            <!-- Champ caché pour stocker la valeur ISO du créneau sélectionné -->
+            <input type="hidden" id="session" name="session" required>
+          </div>
+          <div class="field checkbox">
+            <label>
+              <input type="checkbox" name="consent" required>
+              J’accepte de recevoir des emails relatifs à cette masterclass et à son suivi.
+            </label>
+          </div>
+          <button type="submit">Je m’inscris</button>
+        </form>
+        <!-- Image supplémentaire placée en bas, près du bouton d’inscription -->
+        <div class="bottom-image">
+          <img src="new_image.png" alt="Illustration d’un enfant portant une lumière dans un champ doré" />
+        </div>
+        <p class="reassurance">Pas disponible&nbsp;? Inscris‑toi quand même pour recevoir le replay.</p>
+      </div>
+      <div class="image-container">
+        <!-- Image principale de la page d’inscription -->
+        <img src="image1.jpg" alt="Illustration poétique d’un enfant dans un arbre sous une pluie de lumière" />
+      </div>
+    </div>
+  </main>
+  <script src="script.js"></script>
+</body>
+</html>

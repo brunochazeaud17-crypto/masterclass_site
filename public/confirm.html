@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Confirmation d’inscription</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="confirmation">
+    <h1>🚀 Merci pour ton inscription</h1>
+    <p id="message"></p>
+    <p>Tu vas recevoir un email de confirmation avec toutes les informations nécessaires, ainsi que des rappels avant la session.</p>
+    <a class="button" href="/">Retour à la page d’accueil</a>
+  </main>
+  <script>
+    // Lecture des paramètres de l’URL pour personnaliser le message
+    const params = new URLSearchParams(window.location.search);
+    const name = params.get('name') ? decodeURIComponent(params.get('name')) : '';
+    const dateStr = params.get('date');
+    const messageEl = document.getElementById('message');
+    if (dateStr) {
+      const dateObj = new Date(dateStr);
+      const options = { weekday:'long', year:'numeric', month:'long', day:'numeric', hour:'2-digit', minute:'2-digit' };
+      const formatted = dateObj.toLocaleString('fr-FR', options);
+      messageEl.textContent = `${name}, ta masterclass est programmée pour le ${formatted}.`;
+    } else {
+      messageEl.textContent = `${name}, ton inscription est confirmée.`;
+    }
+  </script>
+</body>
+</html>
