@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     if (dow >= 1 && dow <= 4) {
       // Lundi à jeudi
-      return ['15:00', '18:30', '20:30'];
+      return ['09:30','15:00', '18:30', '20:30'];
     } else if (dow === 5) {
       // Vendredi
       return ['09:30', '15:00', '19:30'];
