@@ -450,7 +450,8 @@ const joinLink = url.toString();
 });
 
 // Start the server
-let PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3000;
+if (!global.PORT) global.PORT = PORT;
 server.listen(PORT, () => {
   console.log(`Masterclass app running. Port: ${PORT}`);
 });
