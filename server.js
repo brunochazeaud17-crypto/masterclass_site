@@ -33,8 +33,6 @@ try {
   // dotenv est facultatif ; si non présent, continue silencieusement
 }
 
-const PORT = process.env.PORT || 3000;
-
 // ===== Tracking storage (simple JSON file) =====
 const VIEWS_FILE = path.join(__dirname, 'views.json');
 function readViews() {
@@ -452,6 +450,7 @@ const joinLink = url.toString();
 });
 
 // Start the server
+const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
   console.log(`Masterclass app running. Port: ${PORT}`);
 });
