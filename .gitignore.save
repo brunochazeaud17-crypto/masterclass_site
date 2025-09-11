@@ -1,0 +1,13 @@
+# Node.js
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Env secrets
+.env
+emails.log
+registrations.json
+views.json
+
+# Mac OS
+.DS_Store
