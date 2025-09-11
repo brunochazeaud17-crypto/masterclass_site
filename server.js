@@ -14,6 +14,13 @@ const path = require('path');
 const querystring = require('querystring');
 const nodemailer = require('nodemailer');
 
+// Helper to derive the public base URL behind a proxy (Render/Railway)
+function getBaseUrl(req) {
+  const proto = req.headers['x-forwarded-proto'] || 'http';
+  const host  = req.headers['x-forwarded-host'] || req.headers.host;
+  return `${proto}://${host}`;
+}
+
 // Les APIs Google Sheets ne sont plus utilisées. Nous n’importons plus googleapis.
 // const { google } = require('googleapis');
 // Airtable integration for storing registrations
@@ -25,8 +32,6 @@ try {
 } catch (e) {
   // dotenv est facultatif ; si non présent, continue silencieusement
 }
-
-const PORT = process.env.PORT || 3000;
 
 // ===== Tracking storage (simple JSON file) =====
 const VIEWS_FILE = path.join(__dirname, 'views.json');
@@ -290,9 +295,17 @@ const server = http.createServer(async (req, res) => {
         // Les erreurs sont déjà loggées dans appendToAirtable
       });
       // Préparer le lien de connexion unique en fonction de la session choisie
-      const host = req.headers.host;
-      const baseUrl = process.env.BASE_URL || `http://${host}`;
-      const joinLink = `${baseUrl}/masterclass.html?session=${encodeURIComponent(eventDate.toISOString())}`;
+      // Base URL priority: APP_BASE_URL > BASE_URL > headers from proxy (Render provides these)
+const baseUrl =
+  process.env.APP_BASE_URL ||
+  process.env.BASE_URL ||
+  getBaseUrl(req);
+
+// Build the URL safely
+const url = new URL('/masterclass.html', baseUrl);
+url.searchParams.set('session', eventDate.toISOString());
+const joinLink = url.toString();
+
       // Construire le titre de webinar
       const webinarTitle = 'Accueillir l’Âme de ton enfant';
       // Contenus HTML pour chaque mail avec les emojis pour un ton chaleureux
@@ -437,6 +450,7 @@ const server = http.createServer(async (req, res) => {
 });
 
 // Start the server
+const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
-  console.log(`Masterclass app running on http://localhost:${PORT}`);
+  console.log(`Masterclass app running. Port: ${PORT}`);
 });
